@@ -7,8 +7,8 @@ class MarkDownField(models.TextField):
     def formfield(self, **kwargs):
         defaults = {'widget': wmd_widgets.MarkDownInput}
         defaults.update(kwargs)
-        
+
         if defaults['widget'] == admin_widgets.AdminTextareaWidget:
             defaults['widget'] = wmd_widgets.AdminMarkDownInput
-        
-        return super(MarkDownField, self).formfield(**defaults)
+
+        return super().formfield(**defaults)

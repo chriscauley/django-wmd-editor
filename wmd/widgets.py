@@ -1,12 +1,9 @@
 
 from django import forms
 from django.conf import settings
-try:
-    from django.forms.utils import flatatt # Renamed in Django 1.7
-except ImportError:
-    from django.forms.util import flatatt # Removed in Django 1.9
+from django.forms.utils import flatatt
 from django.utils.html import escape
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
 from django.contrib.admin import widgets as admin_widgets
 
@@ -14,21 +11,23 @@ from wmd import settings as wmd_settings
 
 class MarkDownInput(forms.Textarea):
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if value is None: value = ''
 
         # wmd.js expects the text area to have an id of wmd-input
+        if attrs is None:
+            attrs = {}
         attrs['id'] = 'wmd-input'
-        final_attrs = self.build_attrs(attrs, name=name)
+        final_attrs = self.build_attrs(attrs, extra_attrs={'name': name})
 
-        html = [u'<div class="wmd-panel"><div id="wmd-button-bar"></div><textarea%s>%s</textarea></div>' % \
-                (flatatt(final_attrs), force_unicode(escape(value)))]
+        html = ['<div class="wmd-panel"><div id="wmd-button-bar"></div><textarea%s>%s</textarea></div>' % \
+                (flatatt(final_attrs), escape(value))]
 
         if wmd_settings.WMD_SHOW_PREVIEW:
             #TODO: Maybe we can generate ids here if there are more than one editor?
-            html.append(u'<div class="wmd-panel"><div id="wmd-preview"></div></div>')
+            html.append('<div class="wmd-panel"><div id="wmd-preview"></div></div>')
 
-        return mark_safe(u'\n'.join(html))
+        return mark_safe('\n'.join(html))
 
     def _media(self):
         return forms.Media(css= {'screen': [settings.STATIC_URL + "wmd/wmd.css"]},
@@ -39,17 +38,19 @@ class MarkDownInput(forms.Textarea):
 
 class AdminMarkDownInput(admin_widgets.AdminTextareaWidget, MarkDownInput):
     # The admin input has its own attribute to show the preview or not
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if value is None: value = ''
 
         # wmd.js expects the text area to have an id of wmd-input
+        if attrs is None:
+            attrs = {}
         attrs['id'] = 'wmd-input'
-        final_attrs = self.build_attrs(attrs, name=name)
+        final_attrs = self.build_attrs(attrs, extra_attrs={'name': name})
 
-        html = [u'<div class="wmd-panel"><div id="wmd-button-bar"></div><textarea%s>%s</textarea></div>' % \
-                (flatatt(final_attrs), force_unicode(escape(value)))]
+        html = ['<div class="wmd-panel"><div id="wmd-button-bar"></div><textarea%s>%s</textarea></div>' % \
+                (flatatt(final_attrs), escape(value))]
 
         if wmd_settings.WMD_ADMIN_SHOW_PREVIEW:
-            html.append(u'<div class="wmd-panel wmd-admin"><div id="wmd-preview"></div></div>')
+            html.append('<div class="wmd-panel wmd-admin"><div id="wmd-preview"></div></div>')
 
-        return mark_safe(u'\n'.join(html))
+        return mark_safe('\n'.join(html))

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 app_name = 'wmd'
 
@@ -15,14 +15,18 @@ setup(name='django-%s-editor' % app_name,
 
         license = "BSD License",
         keywords = "django wmd editor",
+        python_requires='>=3.8',
         classifiers = [
             'Development Status :: 3 - Alpha',
             'Environment :: Web Environment',
             'Framework :: Django',
+            'Framework :: Django :: 5.2',
             'Intended Audience :: Developers',
             'License :: OSI Approved :: BSD License',
             'Operating System :: OS Independent',
             'Programming Language :: Python',
+            'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.12',
             'Topic :: Software Development :: Libraries :: Application Frameworks',
             'Topic :: Software Development :: Libraries :: Python Modules',
         ],
